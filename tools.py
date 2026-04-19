@@ -64,7 +64,7 @@ def analyze_error(error_message: str, error_code: str = "", service_name: str = 
 
     elif code in ("500", "502", "503", "529") or "server error" in error_message.lower():
         analysis["diagnosis"] = (
-            "Server-side error from the external API. This is temporary â "
+            "Server-side error from the external API. This is temporary — "
             "retry with exponential backoff."
         )
         analysis["severity"] = "low"
@@ -175,7 +175,7 @@ def suggest_workflow_fix(
                 "2. Re-run the authentication flow to get fresh tokens",
                 "3. Ensure your OAuth scopes include all required permissions",
                 "4. For API keys: regenerate the key in the service's developer console",
-                "5. Set the key as an environment variable â never hardcode it",
+                "5. Set the key as an environment variable — never hardcode it",
             ],
             "code_example": (
                 "import os\n"
@@ -190,7 +190,7 @@ def suggest_workflow_fix(
             "title": "Rate Limit Fix",
             "steps": [
                 "1. Add exponential backoff: start at 1s, double on each retry (max 6 retries)",
-                "2. Reduce request concurrency â process items sequentially",
+                "2. Reduce request concurrency — process items sequentially",
                 "3. Cache responses where possible to reduce repeat calls",
                 "4. Check the service's rate limit headers (X-RateLimit-Remaining)",
                 "5. Consider upgrading your API tier for higher limits",
@@ -221,7 +221,7 @@ def suggest_workflow_fix(
         "permission": {
             "title": "Permission Fix",
             "steps": [
-                "1. Check which OAuth scopes your app has â compare to what the endpoint needs",
+                "1. Check which OAuth scopes your app has — compare to what the endpoint needs",
                 "2. Re-authorize the app with the required scopes",
                 f"3. For {service_name}: check the developer console for scope settings",
                 "4. Ensure the account has the right role (e.g. Owner, Editor)",
@@ -231,7 +231,7 @@ def suggest_workflow_fix(
         "server_error": {
             "title": "Server Error Fix",
             "steps": [
-                "1. Wait 30â60 seconds and retry",
+                "1. Wait 30–60 seconds and retry",
                 f"2. Check {service_name}'s status page for ongoing incidents",
                 "3. Implement retry logic with backoff for 5xx errors",
                 "4. Log the request_id from the response header for support tickets",
@@ -274,7 +274,7 @@ def suggest_workflow_fix(
                 "1. Validate your config file structure against the service docs",
                 "2. Check for missing required fields",
                 "3. Ensure API keys and URLs are set correctly",
-                "4. Use environment variables for secrets â never hardcode them",
+                "4. Use environment variables for secrets — never hardcode them",
             ],
             "code_example": (
                 "import os\n"
@@ -321,7 +321,7 @@ def generate_workflow_template(
         action: What action to perform on the target (e.g. 'send message', 'append row').
     """
     template = f'''"""
-Automation workflow: {source_service} â {target_service}
+Automation workflow: {source_service} → {target_service}
 Trigger : {trigger}
 Action  : {action}
 """
@@ -334,13 +334,13 @@ import requests
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
 
-# ââ Configuration ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ── Configuration ──────────────────────────────────────────────────────────────
 SOURCE_API_KEY = os.environ["{source_service.upper().replace(" ", "_")}_API_KEY"]
 TARGET_API_KEY = os.environ["{target_service.upper().replace(" ", "_")}_API_KEY"]
 MAX_RETRIES    = 6
 
 
-# ââ Helpers ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ── Helpers ────────────────────────────────────────────────────────────────────
 def api_get(url: str, headers: dict, retries: int = MAX_RETRIES):
     """GET with exponential backoff for rate-limit and server errors."""
     for attempt in range(retries):
@@ -348,7 +348,7 @@ def api_get(url: str, headers: dict, retries: int = MAX_RETRIES):
             resp = requests.get(url, headers=headers, timeout=30)
             if resp.status_code == 429:
                 wait = 2 ** attempt
-                log.warning("Rate limited â waiting %ds (attempt %d/%d)", wait, attempt + 1, retries)
+                log.warning("Rate limited — waiting %ds (attempt %d/%d)", wait, attempt + 1, retries)
                 time.sleep(wait)
                 continue
             resp.raise_for_status()
@@ -367,7 +367,7 @@ def api_post(url: str, headers: dict, payload: dict, retries: int = MAX_RETRIES)
             resp = requests.post(url, headers=headers, json=payload, timeout=30)
             if resp.status_code == 429:
                 wait = 2 ** attempt
-                log.warning("Rate limited â waiting %ds", wait)
+                log.warning("Rate limited — waiting %ds", wait)
                 time.sleep(wait)
                 continue
             resp.raise_for_status()
@@ -379,7 +379,7 @@ def api_post(url: str, headers: dict, payload: dict, retries: int = MAX_RETRIES)
     raise RuntimeError(f"API call failed after {{retries}} retries: {{url}}")
 
 
-# ââ Source: fetch data from {source_service} âââââââââââââââââââââââââââââââââââ
+# ── Source: fetch data from {source_service} ───────────────────────────────────
 def fetch_from_source() -> list[dict]:
     """Fetch items triggered by: {trigger}"""
     url = "https://api.{source}.example.com/v1/items".format(
@@ -392,7 +392,7 @@ def fetch_from_source() -> list[dict]:
     return items
 
 
-# ââ Target: send data to {target_service} âââââââââââââââââââââââââââââââââââââ
+# ── Target: send data to {target_service} ─────────────────────────────────────
 def send_to_target(item: dict) -> None:
     """Perform action: {action}"""
     url = "https://api.{target}.example.com/v1/action".format(
@@ -407,14 +407,14 @@ def send_to_target(item: dict) -> None:
     log.info("Sent to {target_service}: %s", result)
 
 
-# ââ Main workflow ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+# ── Main workflow ──────────────────────────────────────────────────────────────
 def run():
-    log.info("Starting workflow: {source_service} â {target_service}")
+    log.info("Starting workflow: {source_service} → {target_service}")
     try:
         items = fetch_from_source()
         for item in items:
             send_to_target(item)
-        log.info("Workflow complete â processed %d items", len(items))
+        log.info("Workflow complete — processed %d items", len(items))
     except Exception as e:
         log.error("Workflow failed: %s", e)
         raise
