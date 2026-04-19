@@ -2,8 +2,8 @@
 Automation Workflow Agent
 --------------------------
 An AI agent powered by Claude that helps you:
-  â¢ Create automation workflow connections between services
-  â¢ Diagnose and fix errors in automation workflows
+  • Create automation workflow connections between services
+  • Diagnose and fix errors in automation workflows
 
 Usage:
     python agent.py
@@ -58,8 +58,8 @@ def run_agent():
     print("  Powered by Claude claude-opus-4-7")
     print("=" * 60)
     print("\nI can help you:")
-    print("  â¢ Build automation workflow connections between services")
-    print("  â¢ Diagnose and fix errors in your workflows")
+    print("  • Build automation workflow connections between services")
+    print("  • Diagnose and fix errors in your workflows")
     print("\nType 'quit' to exit.\n")
 
     while True:
